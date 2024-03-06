@@ -1,0 +1,99 @@
+<div id="linguagemDiv">
+            <label for="linguagem">Linguagem:</label>
+            <input type="text" id="linguagem">
+        </div>
+
+        <input type="submit" value="Cadastrar">
+    </form>
+
+    <h2>Informações do Funcionário:</h2>
+    <div id="infoFuncionario"></div>
+
+    <script>
+        document.getElementById('formulario').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            try {
+                const nome = document.getElementById('nome').value;
+                const idade = parseInt(document.getElementById('idade').value);
+                const cargo = document.getElementById('cargo').value;
+
+                if (!nome || isNaN(idade) || idade <= 0) {
+                    throw new Error('Por favor, preencha todos os campos corretamente.');
+                }
+
+                let funcionario;
+
+                if (cargo === 'Gerente') {
+                    const departamento = document.getElementById('departamento').value;
+                    funcionario = new Gerente(nome, idade, departamento);
+                } else {
+                    const linguagem = document.getElementById('linguagem').value;
+                    funcionario = new Desenvolvedor(nome, idade, linguagem);
+                }
+
+                exibirInformacoes(funcionario);
+            } catch (error) {
+                exibirErro(error.message);
+            }
+        });
+
+        function exibirInformacoes(funcionario) {
+            const infoFuncionario = document.getElementById('infoFuncionario');
+            infoFuncionario.innerHTML = '';
+            const apresentacao = document.createElement('p');
+            apresentacao.textContent = funcionario.seApresentar();
+            const tarefas = document.createElement('p');
+            tarefas.textContent = funcionario.realizarTarefas();
+            infoFuncionario.appendChild(apresentacao);
+            infoFuncionario.appendChild(tarefas);
+        }
+
+        function exibirErro(mensagem) {
+            const infoFuncionario = document.getElementById('infoFuncionario');
+            infoFuncionario.innerHTML = `<p style="color: red;">Erro: ${mensagem}</p>`;
+        }
+
+        // Definindo a classe Funcionario
+        class Funcionario {
+            constructor(nome, idade, cargo) {
+                this.nome = nome;
+                this.idade = idade;
+                this.cargo = cargo;
+            }
+
+            seApresentar() {
+                return `Olá, meu nome é ${this.nome}, tenho ${this.idade} anos e sou ${this.cargo}.`;
+            }
+
+            realizarTarefas() {
+                return `${this.nome} está trabalhando.`;
+            }
+        }
+
+        // Definindo a classe Gerente que herda de Funcionario
+        class Gerente extends Funcionario {
+            constructor(nome, idade, departamento) {
+                super(nome, idade, 'Gerente');
+                this.departamento = departamento;
+            }
+
+            realizarTarefas() {
+                return `${this.nome} está gerenciando o departamento ${this.departamento}.`;
+            }
+        }
+
+        // Definindo a classe Desenvolvedor que herda de Funcionario
+        class Desenvolvedor extends Funcionario {
+            constructor(nome, idade, linguagem) {
+                super(nome, idade, 'Desenvolvedor');
+                this.linguagem = linguagem;
+            }
+
+            realizarTarefas() {
+                return `${this.nome} está programando em ${this.linguagem}.`;
+            }
+        }
+    </script>
+</body>
+</html>
